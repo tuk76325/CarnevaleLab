@@ -1,0 +1,2 @@
+# CarnevaleLab
+This is the repository that stores everything we have discussed so far. You will find all of our code that we worked on as well as which libraries to install. The libraries you should have install are biopython, pandas, and scikit-learn. See the README file for further instruction on how to install the libraries, as well as the method for downloading the .txt file of the protein sequences we are working with.
