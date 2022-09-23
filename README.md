@@ -1,5 +1,5 @@
 # CarnevaleLab
-This is the repository that stores everything we have discussed so far. You will find all of our code that we worked on as well as which libraries to install. The libraries you should have install are biopython, pandas, and scikit-learn. 
+This is the repository that stores everything we have discussed so far. You will find all of our code that we worked on (main.py) as well as which libraries to install. The libraries you should have install are biopython, pandas, and scikit-learn. 
 
 To install biopython using pip (NOTE: this also comes with numpy so you do not have to do a pip install for that):
   open your terminal in the IDE of your choice, for pycharm it is located at the bottom of the window and type in:
