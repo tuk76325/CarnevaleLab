@@ -1,3 +1,5 @@
+import timeit
+import time
 import Bio.AlignIO
 import numpy as np
 import pandas as pd
@@ -31,29 +33,48 @@ def main():
         newDict.update({aminoAcidList[i] : arraySequences[i]})
     #print(newDict)
 
-#This block of code currently appends each protein sequences' binary vector to a list called newList and newListB
+#This block of code currently appends each protein sequences' binary vector to a list called binaryList.
+#Where index 0 is every char in seq1 and index 1 is every char in se2, etc.
+#benchmark this code block = 3.26s
     binaryList = []
-    x=0
-    while x < len(listSeq):
-        for character in listSeq[x]:
-            binaryList.append((newDict[character]))
-        #print((binaryList))
-        x+=1
+    tempList = []
+    for item in listSeq:
+        for character in item:
+            tempList.append((newDict[character]))
+        binaryList.append(tempList)
+        tempList = []
+    #print(binaryList[0])
+    #print(len(binaryList))
+#This block of code will compute the hamming distance via the matrices gotten from above
+    matrixCharBySeq = np.asarray(binaryList)
+    x = matrixCharBySeq
+    #print(x.shape)
+    a= np.reshape(x, (20081, 1642*22))
+    #print(type(x[0, :]))
+    # print(x[0,:])
+    print(np.shape(a))
+    print(len(a[0]))
+#test that a[0] is == to binarylist[0]
+    # # print(matrixCharBySeq[0,0,:])
+    # matrixSeqByChar = np.transpose(matrixCharBySeq, axes=(1642, 20081, 22))
+    # matrixDot = np.dot(matrixCharBySeq, matrixSeqByChar)
+    # matrixHammings = len(listSeq[0]) - matrixDot
+    # print(matrixHammings)
+    #
+    # newF = open("testFileWrite.txt", 'w')
+    # newF.write(str(matrixHammings))
 
-    binaryListB = binaryList.copy()
-
-
-#This block of code computes the Hamming's Distance via he dot product of the two binary arrays (aka vectors) and then subtracting the length
-    m = 0
-    for i in range(len(newList)):
-        m += np.dot(binaryList[i], binaryListB[i])
-    print(len(newList) - m) #This is the Hamming's Distance
-
-#The problem now is implementing this for loop to work for every sequence in the fasta file and having it do increment automatically @ O(n)
-#After completing this, the next step is to introduce each sequence into a matrix such that the hammings distance is shown for all seqs
-
+startTime = timeit.default_timer()
 main()
+print("This algorithm takes: " + str(timeit.default_timer() - startTime) + " seconds")
 
 
-#USE THE INPUT FXN TO INSERT AN INTEGER THAT U GET FROM THE MATRIX TO GET SEQ ID FROM THE COLUMN
-#THEN USE THE ROWS TO GET THE THE NUMBER AT WHICH THE BASE IS AT
+def test():
+    newF = open("testFileWrite.txt", 'w')
+    a = np.array([[2, 3], [4, 5]])
+    b = np.transpose(a)
+    c = np.dot(a, b)
+    newF.write(str(c))
+
+#think about options to save the data in a txt file or something else
+#next step is analysis of data and clustering, after optimization of the algorithm
