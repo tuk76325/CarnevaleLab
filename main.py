@@ -1,9 +1,13 @@
 import timeit
 import time
+import sys
 import Bio.AlignIO
+import numpy
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.cluster import DBSCAN
 
 def main():
 #This block of code opens the text file so that python can read and parse the protein sequences
@@ -45,22 +49,43 @@ def main():
         tempList = []
     #print(binaryList[0])
     #print(len(binaryList))
-#This block of code will compute the hamming distance via the matrices gotten from above
+#This block of code will compute the hamming distance via the matrices gotten from above by changing the 3D matrix to a 2D matrix via flattening
     matrixCharBySeq = np.asarray(binaryList)
     x = matrixCharBySeq
-    #print(x.shape)
+
     a= np.reshape(x, (20081, 1642*22))
-    #print(type(x[0, :]))
-    # print(x[0,:])
-    print(np.shape(a))
-    print(len(a[0]))
-#test that a[0] is == to binarylist[0]
-    # # print(matrixCharBySeq[0,0,:])
-    # matrixSeqByChar = np.transpose(matrixCharBySeq, axes=(1642, 20081, 22))
-    # matrixDot = np.dot(matrixCharBySeq, matrixSeqByChar)
-    # matrixHammings = len(listSeq[0]) - matrixDot
-    # print(matrixHammings)
+
+    matrixSeqByChar = np.transpose(a)
+    matrixDot = np.dot(a, matrixSeqByChar)
+    matrixHammings = len(listSeq[0]) - matrixDot
+
+    # print(matrixHammings.flatten())
+    # print(len(matrixHammings))
+#This block of code t
+    # counts, bins = np.histogram(matrixHammings, bins= 100)
     #
+    #
+    # # print(matrixHammings)
+    #
+    # plt.stairs(counts, bins)
+    # plt.show()
+
+    clustering = DBSCAN(eps=120, min_samples=5, metric='precomputed').fit(matrixHammings)
+    print(clustering)
+    print(clustering.labels_)
+
+    #Uniprot to GO (tells you voltage gated postassium channel); Find FTP server with uniprot to GO via google (GO = Genometology)
+    #One cluster for every Uniprot code (the name of each sequence in the FASTA file ex. A0A2R2MPD5 for seq 1, 2, 3... etc.)
+
+    count = 0
+
+    for i in clustering.labels_:
+        if (i == -1):
+            count+=1
+
+    print(len(np.unique(clustering.labels_)))
+    print(count)
+
     # newF = open("testFileWrite.txt", 'w')
     # newF.write(str(matrixHammings))
 
