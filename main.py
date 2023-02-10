@@ -1,13 +1,12 @@
 import timeit
-import time
-import sys
-import Bio.AlignIO
-import numpy
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.cluster import DBSCAN
+import Bio.AlignIO  #reading fasta file
+import numpy as np  #data processing
+import pandas as pd #data processing
+import matplotlib.pyplot as plt #visualization of data
+from sklearn.preprocessing import OneHotEncoder #one hot encoding of amino acids
+from sklearn.cluster import DBSCAN  #clustering method
+from sklearn import metrics #counting number of clusters and outliers (noise points)
+import seaborn as sns   #visualization of clustering
 
 def main():
 #This block of code opens the text file so that python can read and parse the protein sequences
@@ -49,11 +48,13 @@ def main():
         tempList = []
     #print(binaryList[0])
     #print(len(binaryList))
+
 #This block of code will compute the hamming distance via the matrices gotten from above by changing the 3D matrix to a 2D matrix via flattening
     matrixCharBySeq = np.asarray(binaryList)
     x = matrixCharBySeq
-
+    print(x.shape)
     a= np.reshape(x, (20081, 1642*22))
+    print(a.shape)
 
     matrixSeqByChar = np.transpose(a)
     matrixDot = np.dot(a, matrixSeqByChar)
@@ -61,7 +62,7 @@ def main():
 
     # print(matrixHammings.flatten())
     # print(len(matrixHammings))
-#This block of code t
+
     # counts, bins = np.histogram(matrixHammings, bins= 100)
     #
     #
@@ -71,20 +72,31 @@ def main():
     # plt.show()
 
     clustering = DBSCAN(eps=120, min_samples=5, metric='precomputed').fit(matrixHammings)
+    labels = clustering.labels_
     print(clustering)
     print(clustering.labels_)
 
-    #Uniprot to GO (tells you voltage gated postassium channel); Find FTP server with uniprot to GO via google (GO = Genometology)
+    # Number of clusters in labels, ignoring noise if present.
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    n_noise_ = list(labels).count(-1)
+
+    print("Estimated number of clusters: %d" % n_clusters_)
+    print("Estimated number of noise points: %d" % n_noise_)
+
+
+
+
+    #Uniprot to GO (tells you voltage gated postassium channel); Find FTP server with uniprot to GO via google (GO = Gene Ontology)
     #One cluster for every Uniprot code (the name of each sequence in the FASTA file ex. A0A2R2MPD5 for seq 1, 2, 3... etc.)
 
-    count = 0
-
-    for i in clustering.labels_:
-        if (i == -1):
-            count+=1
-
-    print(len(np.unique(clustering.labels_)))
-    print(count)
+    # count = 0
+    #
+    # for i in clustering.labels_:
+    #     if (i == -1):
+    #         count+=1
+    #
+    # print(len(np.unique(clustering.labels_)))
+    # print(count)
 
     # newF = open("testFileWrite.txt", 'w')
     # newF.write(str(matrixHammings))
