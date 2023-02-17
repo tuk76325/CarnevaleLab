@@ -1,12 +1,12 @@
-import timeit
+import timeit   #times the speed of the algorithm
 import Bio.AlignIO  #reading fasta file
 import numpy as np  #data processing
 import pandas as pd #data processing
 import matplotlib.pyplot as plt #visualization of data
 from sklearn.preprocessing import OneHotEncoder #one hot encoding of amino acids
-from sklearn.cluster import DBSCAN  #clustering method
+from sklearn.cluster import SpectralClustering  #clustering method
 from sklearn import metrics #counting number of clusters and outliers (noise points)
-import seaborn as sns   #visualization of clustering
+import re #to parse the sedIDs of the fasta file to remove the numbers
 
 def main():
 #This block of code opens the text file so that python can read and parse the protein sequences
@@ -71,20 +71,21 @@ def main():
     # plt.stairs(counts, bins)
     # plt.show()
 
-    clustering = DBSCAN(eps=120, min_samples=5, metric='precomputed').fit(matrixHammings)
-    labels = clustering.labels_
+    # clustering = DBSCAN(eps=120, min_samples=5, metric='precomputed').fit(matrixHammings)
+    # labels = clustering.labels_
+    # print(clustering)
+    # print(clustering.labels_)
+    #
+    # # Number of clusters in labels, ignoring noise if present.
+    # n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    # n_noise_ = list(labels).count(-1)
+    #
+    # print("Estimated number of clusters: %d" % n_clusters_)
+    # print("Estimated number of noise points: %d" % n_noise_)
+
+    clustering = SpectralClustering(n_clusters =5, affinity='precomputed').fit(matrixHammings)
     print(clustering)
     print(clustering.labels_)
-
-    # Number of clusters in labels, ignoring noise if present.
-    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-    n_noise_ = list(labels).count(-1)
-
-    print("Estimated number of clusters: %d" % n_clusters_)
-    print("Estimated number of noise points: %d" % n_noise_)
-
-
-
 
     #Uniprot to GO (tells you voltage gated postassium channel); Find FTP server with uniprot to GO via google (GO = Gene Ontology)
     #One cluster for every Uniprot code (the name of each sequence in the FASTA file ex. A0A2R2MPD5 for seq 1, 2, 3... etc.)
@@ -101,17 +102,25 @@ def main():
     # newF = open("testFileWrite.txt", 'w')
     # newF.write(str(matrixHammings))
 
+# startTime = timeit.default_timer()
+# #main()
+# print("This algorithm takes: " + str(timeit.default_timer() - startTime) + " seconds")
+
+
+def getIDs():
+    newF = open(r'C:\Users\Toshan\PycharmProjects\BioinformaticsDoodnauth\PF00520_rp15.txt')
+    fileIDSet = set()
+    fileIDs = open("sequenceIDs.txt", 'w')
+    for line in newF:
+        if '>' in line:
+            print((line))
+            seqRE = re.findall('([A-Z])\w+', line)
+            fileIDSet.add((seqRE[0]))
+    set(seqRE)
+    print(fileIDSet)
+    for line in fileIDSet:
+        fileIDs.write(line)
+
 startTime = timeit.default_timer()
-main()
+getIDs()
 print("This algorithm takes: " + str(timeit.default_timer() - startTime) + " seconds")
-
-
-def test():
-    newF = open("testFileWrite.txt", 'w')
-    a = np.array([[2, 3], [4, 5]])
-    b = np.transpose(a)
-    c = np.dot(a, b)
-    newF.write(str(c))
-
-#think about options to save the data in a txt file or something else
-#next step is analysis of data and clustering, after optimization of the algorithm
