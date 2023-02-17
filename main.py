@@ -120,6 +120,7 @@ def getIDs():
     print(fileIDSet)
     for line in fileIDSet:
         fileIDs.write(line)
+    #upload text file to https://www.uniprot.org/id-mapping
 
 startTime = timeit.default_timer()
 getIDs()
