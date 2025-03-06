@@ -9,7 +9,7 @@ from sklearn.cluster import DBSCAN  #clustering method
 from sklearn import metrics #counting number of clusters and outliers (noise points)
 import re #to parse the sedIDs of the fasta file to remove the numbers
 from sklearn.manifold import TSNE
-
+#NEW COMMENT
 
 def main():
 #This block of code opens the text file so that python can read and parse the protein sequences
